@@ -1,25 +1,26 @@
 import psycopg2
 from psycopg2 import sql, OperationalError
+from db_info import dbname_, user_, password_, host_, port_
 ###################################################################################################
-def create_db(db_name):
+def create_db():
     try:
         connection = psycopg2.connect(
             dbname='postgres', 
-            user='postgres',
-            password='211288',
-            host='127.0.0.1',
-            port='5432'
+            user=user_,
+            password=password_,
+            host=host_,
+            port=port_
         )
         connection.autocommit = True 
         cursor = connection.cursor()
 
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(dbname_)))
 
-        print(f"Database '{db_name}' created successfully.")
+        print(f"Database '{dbname_}' created successfully.")
         
     except OperationalError as e:
         if "database already exists" in str(e):
-            print(f"Database '{db_name}' already exists.")
+            print(f"Database '{dbname_}' already exists.")
         else:
             print(f"Error: {e}")
     finally:
@@ -28,27 +29,27 @@ def create_db(db_name):
         if 'connection' in locals():
             connection.close()
 ###################################################################################################
-def connect_db(db_name):
+def connect_db():
     try:
         connection = psycopg2.connect(
-            dbname=db_name,
-            user='postgres',
-            password='211288',
-            host='127.0.0.1',
-            port='5432'
+            dbname=dbname_,
+            user=user_,
+            password=password_,
+            host=host_,
+            port=port_
         )
-        print(f"Connected to database '{db_name}' successfully.")
+        print(f"Connected to database '{dbname_}' successfully.")
         
     except OperationalError:
-        print(f"Failed to connect to database '{db_name}'. Attempting to create it...")
-        create_db(db_name)
+        print(f"Failed to connect to database '{dbname_}'. Attempting to create it...")
+        create_db()
 ###################################################################################################
 def action1(cursor):
     try:
         print("Введите название: ", end='')
         title = input()
         print("Введите цену: ", end='')
-        price = int(input())
+        price = float(input())
         cursor.execute("INSERT INTO catalog(title, pricekg) VALUES(%s, %s)", (title, price))
     except ValueError as e:
         print(f"Ошибка: {e}")
@@ -162,18 +163,17 @@ def game_loop(cursor):
             print("Пожалуйста, введите корректные данные.")
 ###################################################################################################
 def main():
-    db_name = "Prices"
-    connect_db(db_name)
+    connect_db()
     connection = psycopg2.connect(
-        dbname=db_name,
-        user='postgres',
-        password='211288',
-        host='127.0.0.1',
-        port='5432'
+        dbname=dbname_,
+        user=user_,
+        password=password_,
+        host=host_,
+        port=port_
     )
     connection.autocommit = True
     cursor = connection.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS catalog (id SERIAL PRIMARY KEY, pricekg INT, title VARCHAR(64));")
+    cursor.execute("CREATE TABLE IF NOT EXISTS catalog (id SERIAL PRIMARY KEY, pricekg FLOAT, title VARCHAR(64));")
     cursor.execute("UPDATE catalog SET id = (SELECT COUNT(*) FROM catalog AS c WHERE c.id <= catalog.id);")
     game_loop(cursor)
     if 'cursor' in locals():
