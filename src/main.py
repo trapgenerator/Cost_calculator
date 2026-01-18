@@ -156,6 +156,8 @@ def game_loop(cursor):
                 action5(cursor) 
             elif(action == 6):
                 break
+            elif(action  == 7):
+                break
             else:
                 print("Пожалуйста, введите корректные данные.")
             print("##########################################")
