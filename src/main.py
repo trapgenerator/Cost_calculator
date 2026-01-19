@@ -139,6 +139,7 @@ def game_loop(cursor):
         print("4. Список цен")
         print("5. расчитать стоимость")
         print("6. закрыть программу")
+	print("7. Тест")
 
         print("Что вы хотите сделать?   ", end='')
         try:
@@ -154,8 +155,8 @@ def game_loop(cursor):
                 action4(cursor)
             elif(action == 5):
                 action5(cursor) 
-            elif(action == 6):
-                break
+            elif(action == 6 or action == 7):
+		break
             else:
                 print("Пожалуйста, введите корректные данные.")
             print("##########################################")
